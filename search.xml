@@ -4,6 +4,27 @@
   
     
     <entry>
+      <title>Обход блокировки мобильного оператора</title>
+      <link href="/2020/04/18/ttl-hack/"/>
+      <url>/2020/04/18/ttl-hack/</url>
+      
+        <content type="html"><![CDATA[<p>Всем доброго времени суток, дорогие читатели. Это моя первая статья в блоге, и первая статья из цикла “Строим сеть”.</p><p>Иногда нужно раздавать интернет на другие устройства. Мы разберёмся, какие существуют способы обхода.</p><h2 id="Принцип-блокировки"><a href="#Принцип-блокировки" class="headerlink" title="Принцип блокировки"></a>Принцип блокировки</h2><img src="/2020/04/18/ttl-hack/type.png" class="" title="Схема блокировки"><p>Многие мобильные операторы обнаруживают раздачу интернета по TTL. Если TTL устройства не совпадает с TTL устройства-модема ,то оператор блокирует интернет соединение.</p><h2 id="Решение"><a href="#Решение" class="headerlink" title="Решение"></a>Решение</h2><p>Установить TTL на устройстве на 1 больше, чем на устройстве-модеме.</p><p>В общем виде, это выглядит так: </p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TTL(К)&#x3D;TTL(М)+1.</span><br></pre></td></tr></table></figure><p>Из этой формулы можно сделать вывод, что есть два пути</p><ol><li>Поменять TTL(М)=TTL(К)-1</li><li>Поменять TTL(К)=TTL(М)+1</li></ol><p>Разберём каждый из них.</p><h2 id="Меняем-TTL-М"><a href="#Меняем-TTL-М" class="headerlink" title="Меняем TTL(М)"></a>Меняем TTL(М)</h2><h3 id="Способы-для-Android"><a href="#Способы-для-Android" class="headerlink" title="Способы для Android:"></a>Способы для Android:</h3><p>Если у вас есть root-права:</p><ol><li>Установите <a href="https://play.google.com/store/apps/details?id=ru.glebchajah.ttlmaster&hl=ru" title="[play.google.com] [TTL Master]" target="">TTL Master из Google Play</a>.</li><li>Если TTL(М) не подходит по формуле, вводим необходимый TTL.</li><li>Перезагружаем устройство.</li><li>Смело включайте режим модема, интернет на других устройствах будет работать.</li></ol><p>Если у вас нету root-прав:</p><ol><li>Скачиваем <a href="https://play.google.com/store/apps/details?id=jackpal.androidterm&hl=ru" title="[play.google.com] [Terminal Emulator]" target="">Эмулятор терминала из Google Play</a>.</li><li>Заходим в терминал и вводим эту команду.<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/sys/net/ipv4/ip_default_ttl</span><br></pre></td></tr></table></figure>Вывод - будет ваш текущий TTL(М):<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">64 (Стандартный для Android)</span><br></pre></td></tr></table></figure></li><li>Вводим команду:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> TTL(М) &gt; cat /proc/sys/net/ipv4/ip_default_ttl</span><br></pre></td></tr></table></figure></li><li>Раздаём интернет.</li></ol><h2 id="Меняем-TTL-К"><a href="#Меняем-TTL-К" class="headerlink" title="Меняем TTL(К)"></a>Меняем TTL(К)</h2><p> Здесь нужно поменять TTL на устройстве, на которое раздаётся интернет.</p><h3 id="Способ-для-Linux"><a href="#Способ-для-Linux" class="headerlink" title="Способ для Linux:"></a>Способ для Linux:</h3><ol><li>Зайти в терминал.</li><li>Редактировать sysctl.conf:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/sysctl.conf</span><br></pre></td></tr></table></figure></li><li>Вставить эту строку:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net.ipv4.ip_default_ttl = TTL(К)</span><br></pre></td></tr></table></figure></li><li>Сохранить файл и перечитать sysctl.conf:<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysctl --system</span><br></pre></td></tr></table></figure></li><li>Включаете раздачу на устройстве модеме.</li><li>Можете пользоваться интернетом.</li></ol><h3 id="Способ-Windows"><a href="#Способ-Windows" class="headerlink" title="Способ Windows:"></a>Способ Windows:</h3><ol><li>Скачать <a href="http://softrare.ru/windows/ttlpatch" title="[softrare.com] [Скачать TTLPatch]" target="">TTLPath</a>.</li><li>Запускаем программу.</li><li>Вводим TTL(К)</li><li>Применяем настройки и перезагружаем компьютер.</li><li>Включаем устройство-модем</li><li>Интернет работает</li></ol><h2 id="Подведём-итог"><a href="#Подведём-итог" class="headerlink" title="Подведём итог"></a>Подведём итог</h2><p>Возможностей обхода блокировок операторов достаточно много. Все новые и провереные способы будут добавляться в статью. </p><p>Хорошего использования выше изложенных способов. Увидимся в следущей статье.</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> Сетевой админ </tag>
+            
+            <tag> Строим Сеть </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Hello World</title>
       <link href="/2020/04/16/hello-world/"/>
       <url>/2020/04/16/hello-world/</url>
